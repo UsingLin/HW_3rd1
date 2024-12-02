@@ -55,6 +55,7 @@ def display(tree: ttk.Treeview, contacts: list[tuple[str, str, str]]) -> None:
     for contact in contacts:
         tree.insert('', 'end', values=contact)
 
+#主程式
 def main():
     database()
 
@@ -89,7 +90,6 @@ def main():
 
     root.grid_columnconfigure(1, weight=1)
     root.grid_rowconfigure(1, weight=1)
-
     root.mainloop()
 
 if __name__ == "__main__":
