@@ -1,4 +1,6 @@
-import re, requests as req, sqlite3 as sql3
+import re
+import requests as req
+import sqlite3 as sql3
 from tkinter import Tk, Label, Entry, Button, StringVar, messagebox, ttk
 
 DB = "contacts.db"
@@ -15,7 +17,6 @@ def database():
             title TEXT NOT NULL,
             email TEXT NOT NULL
         )"""
-
     )
     conn.commit()
     conn.close()
@@ -36,7 +37,11 @@ def saves(name: str, title: str, email: str) -> None:
 
 """正規表示法"""
 def parses(html: str) -> list[tuple[str, str, str]]:
-    contact_pattern = re.compile(r'alt="(.*?)".*?職　*稱[:：]?</td>\s*<td.*?>(.*?)</td>.*?mailto:(.*?)["\']', re.DOTALL)
+    # 正規表示式匹配資料
+    contact_pattern = re.compile(
+        r'<div class="member_name">.*?<a.*?>(.*?)</a>.*?</div>.*?職稱.*?<div class="member_info_content">(.*?)</div>.*?信箱.*?mailto://(.*?)["\']',
+        re.DOTALL
+    )
     matches = contact_pattern.findall(html)
     return [(name.strip(), title.strip(), email.strip()) for name, title, email in matches if name and title and email]
 
@@ -50,12 +55,13 @@ def scrapes(url: str) -> list[tuple[str, str, str]]:
         messagebox.showerror("網路錯誤", f"無法連接網站 {url}：{e}")
         return []
 
+"""畫面更新及顯示"""
 def display(tree: ttk.Treeview, contacts: list[tuple[str, str, str]]) -> None:
     tree.delete(*tree.get_children())
     for contact in contacts:
         tree.insert('', 'end', values=contact)
 
-#主程式
+# 主程式
 def main():
     database()
 
